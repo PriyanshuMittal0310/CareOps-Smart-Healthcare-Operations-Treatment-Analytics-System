@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env
+
+# Environment variables
+.env
+*.env
+
+# MySQL dumps & data files
+*.sql.gz
+*.dump
+*.bak
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/settings.json
+.idea/
+*.iml
+
+# Jupyter Notebooks (checkpoints)
+.ipynb_checkpoints/
+
+# Logs
+*.log
+logs/
+
+# Large generated CSV/JSON exports
+data/raw/
+data/processed/
+*.csv
