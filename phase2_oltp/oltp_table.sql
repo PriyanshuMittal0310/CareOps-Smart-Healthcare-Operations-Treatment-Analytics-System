@@ -1,4 +1,4 @@
-REATE DATABASE IF NOT EXISTS careops_oltp;
+CREATE DATABASE IF NOT EXISTS careops_oltp;
 USE careops_oltp;
 
 -- ─────────────────────────────────────────

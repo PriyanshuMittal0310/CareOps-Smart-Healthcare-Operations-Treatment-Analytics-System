@@ -21,24 +21,31 @@ A complete data systems project implementing an **OLTP database → ETL pipeline
 ## Project Structure
 
 ```
-careops/
+DBMW_project/
 ├── phase0_scope_lock/
 │   └── scope_lock.md          # Stakeholders, business questions, scope boundary
 ├── phase1_requirements/
 │   └── requirements.md        # Functional & non-functional requirements
 ├── phase2_oltp/
-│   └── careops_oltp.sql       # 9-table 3NF schema + seed data (MySQL 8.x)
-├── phase3_advanced_dbms/
-│   └── advanced_features.sql  # Trigger, stored procedure, view
-├── phase4_data_simulation/
-│   └── generate_data.py       # Python script — 500 patients, 2000+ visits
-├── phase5_data_warehouse/
-│   └── careops_dw.sql         # Star schema DDL (surrogate keys)
+│   └── oltp_table.sql         # 11-table OLTP schema (MySQL 8.x)
+├── phase3_adv/
+│   ├── 3a_oltp_trigger.sql    # Trigger
+│   ├── 3b_procedure.sql       # Stored procedure
+│   ├── 3c_view.sql            # View
+│   └── phase3_all.sql         # Consolidated one-click Phase 3 script
+├── phase4_genData/
+│   └── data.py                # Data generator (500 patients, 2000 visits)
+├── phase5_datawarehouse/
+│   ├── createDW.sql           # Data warehouse schema
+│   └── addData.py             # Dimension table load
 ├── phase6_etl/
-│   └── etl_pipeline.py        # Extract → Transform → Load pipeline
+│   ├── etl_code.py            # Python ETL pipeline (implemented)
+│   └── etl.sql                # Reserved SQL ETL file (currently empty)
 ├── phase7_analytics/
-│   └── analytics_queries.sql  # 5 analytical SQL queries
-└── .gitignore
+│   └── (pending)
+├── phase3_advanced_dbms/      # Empty legacy folder
+├── phase4_data_simulation/    # Empty legacy folder
+└── phase5_data_warehouse/     # Empty legacy folder
 ```
 
 ---
@@ -50,10 +57,10 @@ careops/
 | 0     | Scope Lock             | ✅ Done |
 | 1     | Requirement Analysis   | ✅ Done |
 | 2     | OLTP Database Design   | ✅ Done |
-| 3     | Advanced DBMS Features | ⬜ Pending |
-| 4     | Data Simulation        | ⬜ Pending |
-| 5     | Data Warehouse Design  | ⬜ Pending |
-| 6     | ETL Pipeline           | ⬜ Pending |
+| 3     | Advanced DBMS Features | ✅ Done |
+| 4     | Data Simulation        | ✅ Done |
+| 5     | Data Warehouse Design  | ✅ Done |
+| 6     | ETL Pipeline           | ✅ Done (Python ETL) |
 | 7     | Analytics Queries      | ⬜ Pending |
 
 ---
@@ -90,24 +97,56 @@ Ward ──── BedAllocation ── Patient
 ```bash
 # 1. Clone
 git clone <repo-url>
-cd careops
+cd DBMW_project
 
-# 2. Create OLTP database
-mysql -u root -p < phase2_oltp/careops_oltp.sql
+# 2. Create local environment file from template
+copy .env.example .env
 
-# 3. (After Phase 3 is done) Apply advanced features
-mysql -u root -p careops_oltp < phase3_advanced_dbms/advanced_features.sql
+# 3. Edit .env with your MySQL credentials
 
-# 4. (After Phase 4) Generate simulation data
+# 4. Create OLTP database
+mysql -u root -p < phase2_oltp/oltp_table.sql
+
+# 5. Apply advanced features (one-click consolidated script)
+mysql -u root -p < phase3_adv/phase3_all.sql
+
+# 6. Generate simulation data
 pip install mysql-connector-python faker
-python phase4_data_simulation/generate_data.py
+python phase4_genData/data.py
 
-# 5. (After Phase 5) Create data warehouse
-mysql -u root -p < phase5_data_warehouse/careops_dw.sql
+# 7. Create data warehouse
+mysql -u root -p < phase5_datawarehouse/createDW.sql
 
-# 6. (After Phase 6) Run ETL
-python phase6_etl/etl_pipeline.py
+# 8. Populate dimensions
+python phase5_datawarehouse/addData.py
 
-# 7. (After Phase 7) Run analytics queries
+# 9. Run ETL
+python phase6_etl/etl_code.py
+
+# 10. (After Phase 7 is added) Run analytics queries
 mysql -u root -p careops_dw < phase7_analytics/analytics_queries.sql
 ```
+
+## One-Command Demo Runner (Windows PowerShell)
+
+Run this from project root to execute Phases 2 through 6 in order:
+
+```powershell
+./run_demo.ps1
+```
+
+The runner reads `.env` automatically before executing steps.
+
+## Environment Variables
+
+The Python scripts in Phase 4, 5, and 6 now use these variables:
+
+- `CAREOPS_DB_HOST` (default: `localhost`)
+- `CAREOPS_DB_USER` (default: `root`)
+- `CAREOPS_DB_PASSWORD` (default: empty)
+- `CAREOPS_OLTP_DB` (default: `careops_oltp`)
+- `CAREOPS_DW_DB` (default: `careops_dw`)
+
+If variables are not set, defaults are used.
+
+Scripts also auto-load variables from a root `.env` file when present.

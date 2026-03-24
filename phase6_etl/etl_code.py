@@ -1,25 +1,54 @@
 import mysql.connector
+import os
+from pathlib import Path
 
 # ============================================================
 # CareOps — ETL Pipeline
 # Reads from careops_oltp → Transforms → Loads into careops_dw
 # ============================================================
 
-MY_PASSWORD = "Thane@01"   # ← change this
+
+def load_env_file():
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        if key:
+            os.environ.setdefault(key, value)
+
+
+load_env_file()
+
+DB_HOST = os.getenv("CAREOPS_DB_HOST", "localhost")
+DB_PORT = int(os.getenv("CAREOPS_DB_PORT", "3306"))
+DB_USER = os.getenv("CAREOPS_DB_USER", "root")
+DB_PASSWORD = os.getenv("CAREOPS_DB_PASSWORD", "")
+OLTP_DB = os.getenv("CAREOPS_OLTP_DB", "careops_oltp")
+DW_DB = os.getenv("CAREOPS_DW_DB", "careops_dw")
 
 # Two connections — one for each database
 oltp_conn = mysql.connector.connect(
-    host     = "localhost",
-    user     = "root",
-    password = MY_PASSWORD,
-    database = "careops_oltp"
+    host     = DB_HOST,
+    port     = DB_PORT,
+    user     = DB_USER,
+    password = DB_PASSWORD,
+    database = OLTP_DB
 )
 
 dw_conn = mysql.connector.connect(
-    host     = "localhost",
-    user     = "root",
-    password = MY_PASSWORD,
-    database = "careops_dw"
+    host     = DB_HOST,
+    port     = DB_PORT,
+    user     = DB_USER,
+    password = DB_PASSWORD,
+    database = DW_DB
 )
 
 oltp_cur = oltp_conn.cursor()
