@@ -1,0 +1,81 @@
+.careops-layout { display: grid; grid-template-columns: 256px 1fr; height: 100dvh; overflow: hidden; }
+.side-nav { position: sticky; top: 0; height: 100vh; overflow-y: auto; background: #edf3f8; border-right: 1px solid var(--line); padding: 22px 14px; display: flex; flex-direction: column; gap: 18px; }
+.brand-wrap h1 { margin: 0; font-size: 26px; color: var(--heading); line-height: 1; }
+.brand-wrap p { margin: 6px 0 0; font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-soft); font-weight: 700; }
+.nav-links { display: flex; flex-direction: column; gap: 4px; }
+.nav-item { display: flex; align-items: center; gap: 10px; color: #4f6578; text-decoration: none; padding: 10px; border-radius: 10px; font-weight: 600; }
+.nav-item.active { background: #d8ecff; color: var(--heading); border-left: 3px solid var(--accent); }
+.careops-main { min-width: 0; height: 100dvh; overflow: hidden; background: var(--bg); display: flex; flex-direction: column; }
+.top-bar { position: sticky; top: 0; z-index: 40; height: 68px; background: #ffffffd9; border-bottom: 1px solid var(--line); padding: 10px 20px; display: flex; align-items: center; gap: 12px; backdrop-filter: blur(8px); flex-wrap: nowrap; flex-shrink: 0; }
+.search-wrap { flex: 1; min-width: 220px; max-width: 430px; display: flex; align-items: center; gap: 8px; background: #f4f8fb; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; }
+.search-wrap input { border: none; outline: none; background: transparent; width: 100%; font-size: 13px; }
+.date-wrap { display: flex; gap: 8px; flex-wrap: nowrap; }
+.date-wrap label { font-size: 11px; color: #5f7486; display: flex; flex-direction: column; gap: 4px; }
+.date-wrap input { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; font-family: Geist, sans-serif; font-size: 12px; }
+.top-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.icon-btn { border: 1px solid var(--line); background: #fff; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; cursor: pointer; }
+.careops-content { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 20px 20px; }
+.error-banner { margin: 0 0 10px; background: #ffeaea; border: 1px solid #f3c8c8; color: #8b2222; border-radius: 10px; padding: 9px 12px; }
+
+.page-grid { display: flex; flex-direction: column; gap: 14px; }
+.page-header h2 { margin: 0; font-size: 38px; line-height: 1.1; color: var(--heading); }
+.page-header p { margin: 8px 0 0; color: #5f7486; font-size: 16px; }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.kpi-card { border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 12px; }
+.kpi-card p { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: .8px; color: #5f7486; font-weight: 700; }
+.kpi-card h3 { margin: 8px 0 0; font-size: 30px; color: var(--heading); }
+.kpi-card.blue { border-top: 3px solid #0077b6; }
+.kpi-card.teal { border-top: 3px solid #00b4d8; }
+.kpi-card.slate { border-top: 3px solid #4f6d86; }
+.kpi-card.soft { border-top: 3px solid #90e0ef; }
+.kpi-card.danger { border-top: 3px solid #c94747; }
+
+.card { border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 14px; }
+.card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.card-head h3 { margin: 0; font-size: 17px; color: var(--heading); }
+.chart-box { width: 100%; min-height: 220px; }
+.loading-note { margin: 8px 0 0; font-size: 11px; color: #5f7486; }
+
+.hero-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.patients-layout { display: grid; grid-template-columns: 260px minmax(0, 1fr) 260px; gap: 12px; }
+.filter-panel { display: flex; flex-direction: column; gap: 14px; }
+.text-btn { border: none; background: transparent; color: var(--accent); font-size: 12px; font-weight: 700; cursor: pointer; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1px solid var(--line); border-radius: 999px; font-size: 11px; padding: 5px 8px; background: #fff; }
+.chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: #5f7486; }
+.field select { border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; font-family: Geist, sans-serif; }
+.main-stack { display: flex; flex-direction: column; gap: 12px; }
+
+.table-card { padding: 0; }
+.table-card .card-head { padding: 14px; margin: 0; border-bottom: 1px solid var(--line); }
+.table-wrap { overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #ebf2f8; }
+th { font-size: 10px; text-transform: uppercase; color: #60788c; letter-spacing: 1px; }
+
+.risk-badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.risk-badge.stable { background: #e6f4ee; color: #237a4f; }
+.risk-badge.high-risk { background: #e3f0ff; color: #0f57a4; }
+.risk-badge.critical { background: #ffe7e7; color: #a32727; }
+
+@media (max-width: 1200px) {
+  .patients-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 980px) {
+  .careops-layout { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .side-nav { position: static; height: auto; }
+  .careops-main { height: auto; overflow: visible; }
+  .top-bar { height: auto; flex-wrap: wrap; }
+  .date-wrap { flex-wrap: wrap; }
+  .careops-content { overflow: visible; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .hero-cards { grid-template-columns: 1fr; }
+  .page-header h2 { font-size: 30px; }
+}

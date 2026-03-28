@@ -1,0 +1,43 @@
+:root {
+  --deep-twilight: #03045e;
+  --bright-teal-blue: #0077b6;
+  --turquoise-surf: #00b4d8;
+  --frosted-blue: #90e0ef;
+  --light-cyan: #caf0f8;
+
+  --bg: #f6fbff;
+  --surface: #ffffff;
+  --line: #d7e8f5;
+  --text: var(--deep-twilight);
+  --text-soft: #4c6d84;
+  --heading: #08233d;
+  --accent: var(--bright-teal-blue);
+
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 450, "GRAD" 0, "opsz" 24;
+  font-size: 20px;
+  line-height: 1;
+}
