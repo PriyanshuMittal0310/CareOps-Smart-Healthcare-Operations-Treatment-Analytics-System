@@ -1,152 +1,185 @@
-# CareOps — Smart Healthcare Operations & Treatment Analytics System
+# CareOps: Healthcare Operations and Treatment Analytics
 
-> **4th Semester DBMS + Data Warehousing Project**
+CareOps is an end-to-end DBMS and data warehousing project that models hospital operations and delivers decision-oriented analytics.
 
-A complete data systems project implementing an **OLTP database → ETL pipeline → Data Warehouse → Analytics** stack for a hospital domain. This is *not* a medical app — it is an analytics layer designed to answer five critical business questions about hospital operations.
+The implementation covers:
+- OLTP schema design (normalized transactional model)
+- Advanced DBMS features (trigger, stored procedure, view)
+- Data simulation for realistic workload generation
+- Data warehouse design with dimensional modeling
+- ETL pipeline from OLTP to DW
+- Business analytics queries for management insights
+- Optional web dashboard for visualization
 
----
+## Business Questions Covered
 
-## Business Questions Answered
+1. Which diseases consume the highest healthcare resources over time?
+2. Which doctors have the strongest recovery outcomes?
+3. Which wards show sustained over-utilization risk?
+4. How are treatment costs trending month-over-month?
+5. Which diseases have the highest readmission burden?
 
-| # | Question |
-|---|----------|
-| 1 | Which diseases consume the most hospital resources? |
-| 2 | Which doctors achieve the best recovery outcomes? |
-| 3 | Which wards are chronically over-utilized? |
-| 4 | Are treatment costs increasing over time? |
-| 5 | What is the hospital's patient readmission rate? |
+## Current Project Status
 
----
+| Phase | Deliverable | Status |
+|---|---|---|
+| 0 | Scope definition | Completed |
+| 1 | Requirements specification | Completed |
+| 2 | OLTP schema (MySQL) | Completed |
+| 3 | Trigger, procedure, and view | Completed |
+| 4 | OLTP data generation | Completed |
+| 5 | Data warehouse schema and dimensions | Completed |
+| 6 | ETL pipeline (Python) | Completed |
+| 7 | Analytics SQL and report | Completed |
+| 8 | Dashboard (React + Node API) | Implemented |
 
-## Project Structure
+## Repository Layout
 
-```
+```text
 DBMW_project/
 ├── phase0_scope_lock/
-│   └── scope_lock.md          # Stakeholders, business questions, scope boundary
+│   └── scope_lock.md
 ├── phase1_requirements/
-│   └── requirements.md        # Functional & non-functional requirements
+│   └── requirements.md
 ├── phase2_oltp/
-│   └── oltp_table.sql         # 11-table OLTP schema (MySQL 8.x)
+│   └── oltp_table.sql
 ├── phase3_adv/
-│   ├── 3a_oltp_trigger.sql    # Trigger
-│   ├── 3b_procedure.sql       # Stored procedure
-│   ├── 3c_view.sql            # View
-│   └── phase3_all.sql         # Consolidated one-click Phase 3 script
+│   ├── 3a_oltp_trigger.sql
+│   ├── 3b_procedure.sql
+│   ├── 3c_view.sql
+│   └── phase3_all.sql
 ├── phase4_genData/
-│   └── data.py                # Data generator (500 patients, 2000 visits)
+│   └── data.py
 ├── phase5_datawarehouse/
-│   ├── createDW.sql           # Data warehouse schema
-│   └── addData.py             # Dimension table load
+│   ├── createDW.sql
+│   └── addData.py
 ├── phase6_etl/
-│   ├── etl_code.py            # Python ETL pipeline (implemented)
-│   └── etl.sql                # Reserved SQL ETL file (currently empty)
+│   ├── etl_code.py
+│   └── etl.sql
 ├── phase7_analytics/
-│   └── (pending)
-├── phase3_advanced_dbms/      # Empty legacy folder
-├── phase4_data_simulation/    # Empty legacy folder
-└── phase5_data_warehouse/     # Empty legacy folder
+│   ├── analytics_queries.sql
+│   └── PHASE7_ANALYTICS_REPORT.md
+├── phase8_dashboard/
+│   ├── src/
+│   └── server/
+├── run_demo.ps1
+└── PROJECT_STATUS_REPORT.md
 ```
 
----
+Note:
+- `phase3_advanced_dbms`, `phase4_data_simulation`, and `phase5_data_warehouse` are legacy placeholder folders and are not used by the active pipeline.
 
-## Implementation Status
-
-| Phase | Title                  | Status |
-|-------|------------------------|--------|
-| 0     | Scope Lock             | ✅ Done |
-| 1     | Requirement Analysis   | ✅ Done |
-| 2     | OLTP Database Design   | ✅ Done |
-| 3     | Advanced DBMS Features | ✅ Done |
-| 4     | Data Simulation        | ✅ Done |
-| 5     | Data Warehouse Design  | ✅ Done |
-| 6     | ETL Pipeline           | ✅ Done (Python ETL) |
-| 7     | Analytics Queries      | ⬜ Pending |
-
----
-
-## OLTP Schema (Phase 2)
-
-9 entities in **Third Normal Form (3NF)**:
-
-```
-Patient ──┐
-          ├── Visit ──── Diagnosis ── Disease
-Doctor ───┘       └──── Treatment ── Medicine
-                     └── Outcome
-
-Ward ──── BedAllocation ── Patient
-                └── AlertLog (populated by trigger)
-```
-
----
-
-## Tech Stack
+## Technology Stack
 
 | Layer | Technology |
-|-------|-----------|
-| OLTP Database | MySQL 8.x |
-| Data Warehouse | MySQL 8.x (separate schema) |
-| Data Simulation / ETL | Python 3.x (`mysql-connector-python`, `Faker`) |
-| Analytics | SQL — window functions, CTEs, GROUP BY ROLLUP |
+|---|---|
+| Database | MySQL 8.x |
+| ETL and simulation | Python 3.10+ |
+| Python connector | mysql-connector-python |
+| Analytics | SQL (CTEs, window functions, ranking) |
+| Dashboard | React + Vite + Express + mysql2 |
 
----
+## Environment Configuration
 
-## Quick Start
+Create a local `.env` file from the template:
 
-```bash
-# 1. Clone
-git clone <repo-url>
-cd DBMW_project
-
-# 2. Create local environment file from template
-copy .env.example .env
-
-# 3. Edit .env with your MySQL credentials
-
-# 4. Create OLTP database
-mysql -u root -p < phase2_oltp/oltp_table.sql
-
-# 5. Apply advanced features (one-click consolidated script)
-mysql -u root -p < phase3_adv/phase3_all.sql
-
-# 6. Generate simulation data
-pip install mysql-connector-python faker
-python phase4_genData/data.py
-
-# 7. Create data warehouse
-mysql -u root -p < phase5_datawarehouse/createDW.sql
-
-# 8. Populate dimensions
-python phase5_datawarehouse/addData.py
-
-# 9. Run ETL
-python phase6_etl/etl_code.py
-
-# 10. (After Phase 7 is added) Run analytics queries
-mysql -u root -p careops_dw < phase7_analytics/analytics_queries.sql
+```powershell
+Copy-Item .env.example .env
 ```
 
-## One-Command Demo Runner (Windows PowerShell)
+Supported variables:
 
-Run this from project root to execute Phases 2 through 6 in order:
+```text
+CAREOPS_DB_HOST=localhost
+CAREOPS_DB_PORT=3306
+CAREOPS_DB_USER=root
+CAREOPS_DB_PASSWORD=
+CAREOPS_OLTP_DB=careops_oltp
+CAREOPS_DW_DB=careops_dw
+```
+
+These variables are used by Phase 4, Phase 5, Phase 6, and `run_demo.ps1`.
+
+## Prerequisites
+
+1. MySQL 8.x installed and running.
+2. Python 3.10+ available on PATH or in `.venv`.
+3. Required Python package installed:
+
+```bash
+pip install mysql-connector-python faker
+```
+
+## Execution Guide
+
+### Option A: One-command demo run (recommended for viva/demo)
 
 ```powershell
 ./run_demo.ps1
 ```
 
-The runner reads `.env` automatically before executing steps.
+This executes Phases 2 through 6 sequentially.
 
-## Environment Variables
+### Option B: Step-by-step execution
 
-The Python scripts in Phase 4, 5, and 6 now use these variables:
+1. Create OLTP schema:
 
-- `CAREOPS_DB_HOST` (default: `localhost`)
-- `CAREOPS_DB_USER` (default: `root`)
-- `CAREOPS_DB_PASSWORD` (default: empty)
-- `CAREOPS_OLTP_DB` (default: `careops_oltp`)
-- `CAREOPS_DW_DB` (default: `careops_dw`)
+```bash
+mysql -u root -p < phase2_oltp/oltp_table.sql
+```
 
-If variables are not set, defaults are used.
+2. Apply advanced DBMS objects:
 
-Scripts also auto-load variables from a root `.env` file when present.
+```bash
+mysql -u root -p careops_oltp < phase3_adv/phase3_all.sql
+```
+
+3. Generate OLTP data:
+
+```bash
+python phase4_genData/data.py
+```
+
+4. Create DW schema:
+
+```bash
+mysql -u root -p < phase5_datawarehouse/createDW.sql
+```
+
+5. Populate dimensions:
+
+```bash
+python phase5_datawarehouse/addData.py
+```
+
+6. Load fact table via ETL:
+
+```bash
+python phase6_etl/etl_code.py
+```
+
+7. Run analytics queries:
+
+```bash
+mysql -u root -p careops_dw < phase7_analytics/analytics_queries.sql
+```
+
+## Verification Queries
+
+Run these checks after ETL to validate end-to-end loading:
+
+```sql
+SELECT COUNT(*) AS patient_count FROM careops_oltp.Patient;
+SELECT COUNT(*) AS visit_count FROM careops_oltp.Visit;
+SELECT COUNT(*) AS outcome_count FROM careops_oltp.Outcome;
+
+SELECT COUNT(*) AS dim_date_count FROM careops_dw.Dim_Date;
+SELECT COUNT(*) AS dim_disease_count FROM careops_dw.Dim_Disease;
+SELECT COUNT(*) AS fact_treatment_count FROM careops_dw.Fact_Treatment;
+```
+
+## Submission Notes
+
+1. Phase 7 deliverables are available in `phase7_analytics/analytics_queries.sql` and `phase7_analytics/PHASE7_ANALYTICS_REPORT.md`.
+2. The dashboard is optional for core DBMS grading but available under `phase8_dashboard` for demonstration.
+3. `phase6_etl/etl.sql` is intentionally kept as a reserved script; production ETL implementation is in `phase6_etl/etl_code.py`.

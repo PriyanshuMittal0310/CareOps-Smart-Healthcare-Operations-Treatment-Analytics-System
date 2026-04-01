@@ -1,180 +1,186 @@
 # CareOps Project Status Report and Run Guide
 
-Date: 2026-03-24
+Date: 2026-04-01
 Workspace: DBMW_project
 
 ## 1. Executive Summary
 
-The project has substantial implementation completed across OLTP, advanced DBMS features, data simulation, data warehouse schema, and ETL scripts.
+CareOps is now implemented end-to-end for the core DBMS and data warehousing scope:
+- OLTP schema and advanced DBMS objects are complete.
+- Data simulation, DW schema build, and ETL loading are complete.
+- Phase 7 analytics SQL and report are complete.
+- Dashboard layer is implemented as an additional demonstration component.
 
-Current practical status is ahead of the README status table. Several folders expected by README naming are empty, while equivalent implementation exists in differently named folders.
+Project documentation has been aligned with active folder paths and executable scripts.
 
 ## 2. Phase-by-Phase Status
 
 | Phase | Expected Deliverable | Current Status | Evidence |
 |---|---|---|---|
-| 0 | Scope lock | Done | phase0_scope_lock/scope_lock.md exists and is complete |
-| 1 | Requirements | Done | phase1_requirements/requirements.md exists and is complete |
-| 2 | OLTP schema | Done | phase2_oltp/oltp_table.sql defines 11 tables |
-| 3 | Trigger + Procedure + View | Done (implemented in split files) | phase3_adv/3a_oltp_trigger.sql, 3b_procedure.sql, 3c_view.sql |
-| 4 | Data simulation | Done | phase4_genData/data.py generates doctors, diseases, medicines, patients, visits, diagnosis, treatment, bed allocation, outcomes |
-| 5 | DW schema + dimension preparation | Done | phase5_datawarehouse/createDW.sql and addData.py |
-| 6 | ETL pipeline | Done (Python ETL implemented, SQL file empty) | phase6_etl/etl_code.py implemented; phase6_etl/etl.sql is empty |
-| 7 | Analytics queries | Pending | phase7_analytics folder is empty |
+| 0 | Scope lock | Done | `phase0_scope_lock/scope_lock.md` |
+| 1 | Requirements | Done | `phase1_requirements/requirements.md` |
+| 2 | OLTP schema | Done | `phase2_oltp/oltp_table.sql` (11 tables) |
+| 3 | Trigger + Procedure + View | Done | `phase3_adv/3a_oltp_trigger.sql`, `3b_procedure.sql`, `3c_view.sql`, `phase3_all.sql` |
+| 4 | Data simulation | Done | `phase4_genData/data.py` |
+| 5 | DW schema + dimension load | Done | `phase5_datawarehouse/createDW.sql`, `addData.py` |
+| 6 | ETL pipeline | Done | `phase6_etl/etl_code.py` |
+| 7 | Analytics queries + reporting | Done | `phase7_analytics/analytics_queries.sql`, `PHASE7_ANALYTICS_REPORT.md` |
+| 8 | Dashboard (optional demo layer) | Implemented | `phase8_dashboard/` |
 
-## 3. Folder and Naming Gaps to Resolve
+## 3. Folder and Naming Notes
 
-1. README uses different folder/file names than current workspace content.
-2. Empty folders exist where README expects implementation:
-   - phase3_advanced_dbms is empty, while SQL is in phase3_adv.
-   - phase4_data_simulation is empty, while generator is in phase4_genData/data.py.
-   - phase5_data_warehouse is empty, while DW files are in phase5_datawarehouse.
-3. phase7_analytics is empty (remaining major implementation item).
-4. phase6_etl/etl.sql is empty (not blocking if Python ETL is the intended final ETL deliverable).
+Current active implementation folders:
+- `phase3_adv`
+- `phase4_genData`
+- `phase5_datawarehouse`
 
-## 4. What Is Remaining
+Legacy placeholder folders still present but not used by execution pipeline:
+- `phase3_advanced_dbms`
+- `phase4_data_simulation`
+- `phase5_data_warehouse`
+
+`phase6_etl/etl.sql` remains intentionally reserved; production ETL logic is implemented in `phase6_etl/etl_code.py`.
+
+## 4. Remaining Work
 
 ### Critical remaining work
 
-1. Create Phase 7 analytics SQL file with 5 required business queries:
-   - Disease resource consumption trend
-   - Doctor recovery performance ranking
-   - Ward over-utilization analysis
-   - Treatment cost trend over time
-   - Readmission rate by disease
+No critical blocker remains for core DBMS + DW submission scope.
 
 ### Recommended cleanup
 
-1. Align folder names with README or update README to match actual paths.
-2. Consolidate Phase 3 SQL into one script for one-click execution (optional but useful for demos).
-3. Move hardcoded credentials to environment variables or config file.
-4. Add an end-to-end runner document for viva/demo use (this report can serve as base).
+1. Remove hardcoded fallback password from dashboard API defaults and enforce `.env` usage in `phase8_dashboard/server/index.js`.
+2. Optionally archive or remove legacy placeholder folders to reduce confusion.
+3. Add a short “assessor checklist” section mapping each rubric requirement to file evidence.
 
 ## 5. Detailed Steps to Run the Project
 
-These steps follow the actual files currently present in this workspace.
+These steps match the current repository implementation.
 
 ## 5.1 Prerequisites
 
 1. MySQL 8.x running locally.
 2. Python 3.10+ installed.
-3. Python package mysql-connector-python installed.
-4. Optional: Faker (not required by current data.py, but listed in README stack).
+3. Package requirements:
 
-Install package command:
-
+```bash
 pip install mysql-connector-python faker
+```
 
-## 5.2 Configure credentials in Python files
+## 5.2 Configure environment variables
 
-Before running Python scripts, edit DB credentials in:
-1. phase4_genData/data.py
-2. phase5_datawarehouse/addData.py
-3. phase6_etl/etl_code.py
+Use root `.env` for Phase 4 to Phase 6 scripts and `run_demo.ps1`:
 
-Ensure username/password/database values match your MySQL setup.
+```text
+CAREOPS_DB_HOST=localhost
+CAREOPS_DB_PORT=3306
+CAREOPS_DB_USER=root
+CAREOPS_DB_PASSWORD=
+CAREOPS_OLTP_DB=careops_oltp
+CAREOPS_DW_DB=careops_dw
+```
 
-## 5.3 Create OLTP schema
+Create from template:
 
-Run:
+```powershell
+Copy-Item .env.example .env
+```
 
+## 5.3 One-command run (recommended)
+
+Run from project root:
+
+```powershell
+./run_demo.ps1
+```
+
+This executes:
+1. Phase 2 schema creation
+2. Phase 3 consolidated SQL (`phase3_all.sql`)
+3. Phase 4 data generation
+4. Phase 5 DW creation and dimension load
+5. Phase 6 ETL
+
+## 5.4 Step-by-step manual run
+
+1. Create OLTP schema:
+
+```bash
 mysql -u root -p < phase2_oltp/oltp_table.sql
+```
 
-Expected result:
-- Database careops_oltp created
-- 11 tables created
+2. Apply Phase 3 advanced DBMS objects:
 
-## 5.4 Apply advanced DBMS features (Phase 3)
+```bash
+mysql -u root -p careops_oltp < phase3_adv/phase3_all.sql
+```
 
-Run in this order:
+3. Generate OLTP data:
 
-mysql -u root -p careops_oltp < phase3_adv/3a_oltp_trigger.sql
-mysql -u root -p careops_oltp < phase3_adv/3b_procedure.sql
-mysql -u root -p careops_oltp < phase3_adv/3c_view.sql
-
-Expected result:
-- Trigger trg_long_stay created
-- Procedure admit_patient created
-- View vw_doctor_performance created
-
-## 5.5 Generate OLTP data (Phase 4)
-
-Run:
-
+```bash
 python phase4_genData/data.py
+```
 
-Expected result:
-- Reference entities inserted
-- 500 patients
-- 2000 visits
-- Diagnosis, treatment, bed allocation, outcomes populated
+4. Create DW schema:
 
-## 5.6 Create Data Warehouse schema (Phase 5)
-
-Run:
-
+```bash
 mysql -u root -p < phase5_datawarehouse/createDW.sql
+```
 
-Expected result:
-- Database careops_dw created
-- Dimension tables + Fact_Treatment table created
+5. Populate dimensions:
 
-## 5.7 Populate dimension tables (Phase 5 support)
-
-Run:
-
+```bash
 python phase5_datawarehouse/addData.py
+```
 
-Expected result:
-- Dim_Date, Dim_Disease, Dim_Doctor, Dim_Ward, Dim_Outcome populated
+6. Run ETL:
 
-## 5.8 Run ETL to load fact table (Phase 6)
-
-Run:
-
+```bash
 python phase6_etl/etl_code.py
+```
 
-Expected result:
-- Data extracted from careops_oltp
-- Aggregated transformations applied
-- Fact_Treatment populated in careops_dw
+7. Run analytics:
 
-## 5.9 Run analytics (Phase 7)
-
-Current status: pending because no analytics SQL script exists yet in phase7_analytics.
-
-Temporary workaround:
-- Execute ad-hoc analytical queries directly on careops_dw using Fact_Treatment and dimensions.
+```bash
+mysql -u root -p careops_dw < phase7_analytics/analytics_queries.sql
+```
 
 ## 6. Suggested Verification Queries (Post-Run)
 
-Run these to verify end-to-end load health:
+Run these to validate load completeness and consistency:
 
-1. OLTP table counts
-   - SELECT COUNT(*) FROM careops_oltp.Patient;
-   - SELECT COUNT(*) FROM careops_oltp.Visit;
-   - SELECT COUNT(*) FROM careops_oltp.Outcome;
+```sql
+SELECT COUNT(*) AS patient_count FROM careops_oltp.Patient;
+SELECT COUNT(*) AS visit_count FROM careops_oltp.Visit;
+SELECT COUNT(*) AS outcome_count FROM careops_oltp.Outcome;
 
-2. DW table counts
-   - SELECT COUNT(*) FROM careops_dw.Dim_Date;
-   - SELECT COUNT(*) FROM careops_dw.Dim_Disease;
-   - SELECT COUNT(*) FROM careops_dw.Fact_Treatment;
+SELECT COUNT(*) AS dim_date_count FROM careops_dw.Dim_Date;
+SELECT COUNT(*) AS dim_disease_count FROM careops_dw.Dim_Disease;
+SELECT COUNT(*) AS fact_count FROM careops_dw.Fact_Treatment;
 
-3. Sanity checks
-   - SELECT outcome_label, COUNT(*) FROM careops_dw.Dim_Outcome GROUP BY outcome_label;
-   - SELECT year_num, month_num, SUM(total_cases) FROM careops_dw.Fact_Treatment ft JOIN careops_dw.Dim_Date dd ON ft.date_id = dd.date_id GROUP BY year_num, month_num ORDER BY year_num, month_num;
+SELECT outcome_label, COUNT(*)
+FROM careops_dw.Dim_Outcome
+GROUP BY outcome_label;
+
+SELECT dd.year_num, dd.month_num, SUM(ft.total_cases) AS total_cases
+FROM careops_dw.Fact_Treatment ft
+JOIN careops_dw.Dim_Date dd ON dd.date_id = ft.date_id
+GROUP BY dd.year_num, dd.month_num
+ORDER BY dd.year_num, dd.month_num;
+```
 
 ## 7. Risks / Notes
 
-1. Credentials are hardcoded in multiple scripts.
-2. Some scripts use empty password while others use a non-empty password; unify before execution.
-3. ETL joins BedAllocation by patient and date condition; if multiple allocations overlap for a patient, metric duplication risk exists.
-4. README implementation status is outdated relative to actual code in repository.
+1. Dashboard API currently includes a hardcoded fallback password in `phase8_dashboard/server/index.js`; this should be removed for production submission.
+2. ETL logic joins bed allocation by patient/date condition; if overlapping allocations exist, duplication risk should be monitored.
+3. Core README files are now aligned to actual implementation paths and status.
 
 ## 8. Overall Completion Estimate
 
 Estimated completion by project phases:
-- Completed: Phase 0, 1, 2, 3, 4, 5, 6
-- Remaining: Phase 7 (analytics script finalization), plus documentation/path cleanup
+- Completed: Phase 0 through Phase 7
+- Implemented extension: Phase 8 dashboard
 
-Approximate completion percentage: 85% to 90%
+Approximate completion percentage:
+- Core DBMS + DW scope: 100%
+- Including documentation hardening and security cleanup: 95%+
